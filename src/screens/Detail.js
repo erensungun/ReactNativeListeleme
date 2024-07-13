@@ -1,7 +1,8 @@
-import { StyleSheet,  View, SafeAreaView, ScrollView, Image} from 'react-native'
+import { StyleSheet,  View, ScrollView, Image} from 'react-native'
 import React,{useState} from 'react'
 import { Avatar, Appbar, Button, Dialog, Portal, Text, PaperProvider, SegmentedButtons, useTheme, Divider, IconButton, Icon, Card} from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 
 const BOTTOM_APPBAR_HEIGHT = 80;
 const MEDIUM_FAB_HEIGHT = 56;
@@ -32,11 +33,12 @@ const Detail = ({route,navigation}) => {
             setValue(value+1)
         }
     }
+    //console.log( product)
 
   return (
     <PaperProvider>
         <SafeAreaView style={styles.container}>
-            <Appbar.Header mode='small'>
+            <Appbar.Header mode='small' statusBarHeight={0}>
                 <Appbar.BackAction onPress={() => navigation.goBack()} />
                 <Appbar.Content title={product.title} />
                 <Appbar.Action icon="delete" onPress={showDialog} />
@@ -44,13 +46,13 @@ const Detail = ({route,navigation}) => {
             <ScrollView contentContainerStyle={styles.contentContainer}>
               <Card style={{marginVertical:10}}>
                 <View style={styles.imageSection}>
-                  <Card.Cover source={{ uri: selectedImage }} style={styles.image} />
+                <Image source={{ uri: selectedImage }} style={styles.image} />
                   {product.images.length > 1 ? (
                       <SegmentedButtons
                       value={selectedImage}
                       onValueChange={setSelectedImage}
                       buttons={imageButtons}
-                      style={{ marginHorizontal:25}}
+                      style={{ marginHorizontal:70}}
                       />
                   ) : null}
                 </View>
@@ -72,10 +74,12 @@ const Detail = ({route,navigation}) => {
                         <Text style={styles.rating}>{product.stock} stocks</Text>
                     </View>
                 </View>
+
                 <Divider/>
+                
                 <Text style={styles.description}>{product.description}</Text>
+
                 <Divider/>
-                <Text style={styles.availability}>Availability: {product.availabilityStatus}</Text>
                 
                 <Text style={styles.weight}>Weight: {product.weight} kg</Text>
                 <Text style={styles.dimensions}>Dimensions: {product.dimensions.width} x {product.dimensions.height} x {product.dimensions.depth} cm</Text>
@@ -86,16 +90,28 @@ const Detail = ({route,navigation}) => {
                 
 
 
-                <Card>
-                  <Card.Title title={product.reviews[0].reviewerName} subtitle="Card Subtitle" right={(props) => <IconButton {...props} icon="dots-vertical" onPress={() => {}} />} />
+                <Card style={{marginVertical:5}}>
                   <Card.Content>
                     <Text variant="titleLarge">{product.reviews[0].reviewerName}</Text>
-                    <Text variant="bodyMedium">{product.reviews[0].reviewerName}</Text>
+                    <Text variant="bodySmall">{product.reviews[0].date} - {product.reviews[0].rating}<Icon source="star"/></Text>
+                    <Text variant="bodyMedium">{product.reviews[0].comment}</Text>
                   </Card.Content>
-                  <Card.Actions>
-                    <Button>Cancel</Button>
-                    <Button>Ok</Button>
-                  </Card.Actions>
+                </Card>
+
+                <Card style={{marginVertical:5}}>
+                  <Card.Content>
+                    <Text variant="titleLarge">{product.reviews[1].reviewerName}</Text>
+                    <Text variant="bodySmall">{product.reviews[1].date} - {product.reviews[1].rating}<Icon source="star"/></Text>
+                    <Text variant="bodyMedium">{product.reviews[1].comment}</Text>
+                  </Card.Content>
+                </Card>
+
+                <Card style={{marginVertical:5}}>
+                  <Card.Content>
+                    <Text variant="titleLarge">{product.reviews[2].reviewerName}</Text>
+                    <Text variant="bodySmall">{product.reviews[2].date} - {product.reviews[2].rating}<Icon source="star"/></Text>
+                    <Text variant="bodyMedium">{product.reviews[2].comment}</Text>
+                  </Card.Content>
                 </Card>
                 <Portal>
                     <Dialog visible={visible} onDismiss={hideDialog}>
@@ -117,13 +133,12 @@ const Detail = ({route,navigation}) => {
             <Appbar
                 style={[
                     styles.bottom,{
-                        height: BOTTOM_APPBAR_HEIGHT + bottom, 
+                        height: BOTTOM_APPBAR_HEIGHT, 
                         backgroundColor: theme.colors.elevation.level2,
                         paddingHorizontal:20,
                         justifyContent:"space-between"
                     },
                 ]}
-                safeAreaInsets={{ bottom }}
                 >
                 <Button mode='contained' >${product.price}</Button>
                 <View style={{flexDirection:"row", backgroundColor:"#e6e6e6", borderRadius:100, justifyContent:"space-between", alignItems:"center"}}>
@@ -151,9 +166,8 @@ const styles = StyleSheet.create({
         marginBottom: 16,
       },
       image: {
-        width: 200,
-        height: 200,
-        margin: 16,
+        height:350,
+        width:"100%",
         resizeMode:"contain",
       },
       titleSection:{
@@ -163,11 +177,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
       },
       titleLeftSide:{
-        width: "80%"
+        width: "76%",
+        paddingLeft:10
       },
       titleRightSide:{
         alignItems:"center",
-        width: "20%"
+        justifyContent:"center",
+        width: "24%",
       },
       title: {
         fontSize: 24,
@@ -183,6 +199,8 @@ const styles = StyleSheet.create({
       description: {
         fontSize: 16,
         textAlign: 'center',
+        marginVertical:10,
+        paddingHorizontal:10
       },
       price: {
         fontSize: 18,
@@ -196,17 +214,22 @@ const styles = StyleSheet.create({
       },
       weight: {
         fontSize: 16,
+        padding:10
       },
       dimensions: {
         fontSize: 16,
+        padding:10
       },
       returnPolicy: {
         fontSize: 16,
+        padding:10
       },
       warrantyInformation: {
         fontSize: 16,
+        padding:10
       },
       shippingInformation: {
         fontSize: 16,
+        padding:10
       },
 })
